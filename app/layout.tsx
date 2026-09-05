@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Space_Grotesk, Instrument_Serif } from "next/font/go
 import { MotionConfig } from "motion/react";
 import "./globals.css";
 import { SmoothScrollProvider } from "@/components/smooth-scroll";
+import { CinematicBurst } from "@/components/cine/director";
 import { TerminalNav } from "@/components/terminal-nav";
 import { CursorLight } from "@/components/cursor-light";
 import { Cursor } from "@/components/cursor";
@@ -64,6 +65,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <SmoothScrollProvider>
               <TerminalNav />
               <main className="relative z-10">{children}</main>
+              <CinematicBurst />
             </SmoothScrollProvider>
           </Preloader>
         </MotionConfig>
