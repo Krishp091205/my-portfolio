@@ -32,9 +32,10 @@ const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
 });
 
-const siteUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+const siteUrl =
+  process.env.SITE_URL ||
+  process.env.VERCEL_URL ||
+  "https://krishp091205.github.io/my-portfolio";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

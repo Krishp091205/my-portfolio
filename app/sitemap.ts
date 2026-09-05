@@ -4,7 +4,9 @@ import { projects } from "@/lib/data";
 const base =
   process.env.VERCEL_URL
     ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000";
+    : "https://krishp091205.github.io/my-portfolio";
+
+export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

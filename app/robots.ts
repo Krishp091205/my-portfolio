@@ -5,6 +5,8 @@ const base =
     ? `https://${process.env.VERCEL_URL}`
     : "http://localhost:3000";
 
+export const dynamic = "force-static";
+
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {

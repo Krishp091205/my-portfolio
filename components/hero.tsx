@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, type Variants } from "motion/react";
 import { useSmoothScroll } from "@/components/smooth-scroll";
 import { HeroParticles } from "@/components/particle-field";
@@ -102,12 +102,26 @@ const item: Variants = {
 export function Hero() {
   const { scrollTo } = useSmoothScroll();
   const { booted } = useBoot();
+  const titleRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    if (booted && titleRef.current) {
+      const t = window.setTimeout(
+        () => titleRef.current?.classList.add("wm-show"),
+        420
+      );
+      return () => window.clearTimeout(t);
+    }
+  }, [booted]);
 
   return (
     <section
       id="home"
-      className="relative flex min-h-dvh items-center overflow-hidden px-6 pt-16"
+      className="hero-stage relative flex min-h-dvh items-center overflow-hidden px-6 pt-16"
     >
+      {/* reserved key-light the page settles under; hauls away as you scroll */}
+      <div aria-hidden className="scene-light" />
+
       {/* environment enters slowly — never commanding */}
       <motion.div
         aria-hidden
@@ -150,14 +164,29 @@ export function Hero() {
           </motion.p>
 
           <motion.h1
+            ref={titleRef}
             variants={item}
             className="title-display font-display text-4xl font-medium leading-[1.05] text-foreground md:text-6xl"
           >
-            I direct light,
+            <span className="word-mask">
+              <span>I direct</span>
+            </span>{" "}
+            <span className="word-mask">
+              <span>light,</span>
+            </span>
             <br />
-            pixels <span className="font-serif-accent italic">and</span>
+            <span className="word-mask">
+              <span>pixels</span>
+            </span>{" "}
+            <span className="font-serif-accent italic">
+              <span className="word-mask">
+                <span>and</span>
+              </span>
+            </span>
             <br />
-            interaction.
+            <span className="word-mask">
+              <span>interaction.</span>
+            </span>
           </motion.h1>
 
           <motion.p

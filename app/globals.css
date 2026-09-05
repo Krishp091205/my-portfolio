@@ -108,6 +108,38 @@ body {
   }
 }
 
+/* scene light — a reserved studio key-light the page settles under.
+   It gradually hauls as you scroll past the hero, composing the site
+   as one continuous frame. */
+.scene-light {
+  position: absolute;
+  left: 50%;
+  top: -46%;
+  width: 130vw;
+  height: 90vh;
+  margin-left: -65vw;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    42% 56% at 50% 46%,
+    rgba(148, 178, 255, 0.09),
+    rgba(0, 217, 255, 0.045) 46%,
+    transparent 72%
+  );
+  transform: translate3d(0, 0, 0);
+  transition: transform 2000ms var(--ease);
+}
+.hero-stage {
+  contain: layout style;
+}
+html.scrolled .hero-stage .scene-light {
+  transform: translate3d(0, -44vh, 0);
+  opacity: 0.35;
+  transition:
+    transform 2200ms var(--ease),
+    opacity 1600ms ease;
+}
+
 /* film grain — subtle, never above the content */
 .grain {
   position: fixed;
@@ -231,6 +263,23 @@ html.cus a {
   text-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
 }
 
+/* cinematic word reveal — masked, dry, projector-lit */
+.word-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+.word-mask > span {
+  display: inline-block;
+  transform: translateY(115%);
+  transition: transform 1000ms var(--ease);
+}
+.wm-show .word-mask > span {
+  transform: translateY(0);
+}
+
 /* restrained glitch — only revealed on container hover */
 .glitch {
   position: relative;
@@ -317,8 +366,13 @@ html.cus a {
   .term-cursor,
   .pulse-ring,
   .glitch::before,
-  .glitch::after {
+  .glitch::after,
+  .word-mask > span {
     animation: none;
+    transition: none;
+  }
+  .word-mask > span {
+    transform: none;
   }
   .grain {
     opacity: 0.02;
