@@ -19,7 +19,7 @@ export default function Home() {
             <span className="text-foreground/60">kris</span>@portfolio3d —
             director of light &amp; code
           </p>
-          <p>© {new Date().getFullYear()} — shot &amp; shipped by Krish</p>
+          <p>© 2026 — shot &amp; shipped by Krish</p>
         </div>
       </footer>
     </div>
