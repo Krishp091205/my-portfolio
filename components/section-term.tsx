@@ -1,25 +1,35 @@
 export function SectionTerm({
   path,
   title,
-  accent = "text-accent2",
+  index,
+  className = "",
 }: {
   path: string;
   title: string;
-  accent?: string;
+  index: string;
+  className?: string;
 }) {
   return (
-    <div className="mb-12">
-      <p className="font-mono text-sm text-muted">
-        <span className="text-accent2">kris</span>
-        <span className="text-muted">@portfolio3d</span>
-        <span className="text-accent">:/</span>
-        <span className="text-accent2">{path}</span>
-        <span className="text-accent">$</span>
-        <span className="term-cursor ml-1 inline-block h-3.5 w-2 bg-accent" />
-      </p>
-      <h2 className={`mt-3 font-mono text-2xl font-bold md:text-4xl ${accent}`}>
-        {title}
-      </h2>
+    <div className="mb-14 flex items-end justify-between gap-6 border-b border-foreground/5 pb-5">
+      <div>
+        <p className="font-mono text-xs tracking-wide text-muted">
+          <span className="text-foreground/70">kris@portfolio3d</span>
+          <span className="text-muted">:</span>
+          <span className="text-foreground/40">{path}</span>
+          <span className="text-accent glow-lime">$</span>
+        </p>
+        <h2
+          className={`title-display mt-3 font-display text-3xl font-medium text-foreground md:text-5xl ${className}`}
+        >
+          {title}
+        </h2>
+      </div>
+      <span
+        aria-hidden
+        className="hidden font-mono text-[10px] uppercase tracking-[0.35em] text-foreground/25 md:block"
+      >
+        {index}
+      </span>
     </div>
   );
 }

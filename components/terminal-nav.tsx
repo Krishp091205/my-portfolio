@@ -4,35 +4,39 @@ import { useEffect, useState } from "react";
 import { useSmoothScroll } from "@/components/smooth-scroll";
 
 const NAV = [
-  { id: "home", label: "~" },
-  { id: "skills", label: "skills/" },
-  { id: "work", label: "projects/" },
-  { id: "about", label: "about/" },
-  { id: "contact", label: "contact/" },
+  { id: "home", label: "~", num: "00" },
+  { id: "skills", label: "skills/", num: "01" },
+  { id: "work", label: "projects/", num: "02" },
+  { id: "about", label: "about/", num: "03" },
+  { id: "contact", label: "contact/", num: "04" },
 ] as const;
 
 export function TerminalNav() {
   const { scrollTo } = useSmoothScroll();
   const [active, setActive] = useState<string>("home");
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActive(entry.target.id);
-          }
+          if (entry.isIntersecting) setActive(entry.target.id);
         }
       },
       { rootMargin: "-45% 0px -50% 0px" }
     );
-
     NAV.forEach((n) => {
       const el = document.getElementById(n.id);
       if (el) observer.observe(el);
     });
-
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 28);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
@@ -42,52 +46,54 @@ export function TerminalNav() {
       if (tag === "INPUT" || tag === "TEXTAREA") return;
       const idx = NAV.findIndex((n) => n.id === active);
       if (idx === -1) return;
-      if (e.key === "j") {
-        const next = NAV[(idx + 1) % NAV.length];
-        scrollTo(`#${next.id}`);
-      }
-      if (e.key === "k") {
-        const prev = NAV[(idx - 1 + NAV.length) % NAV.length];
-        scrollTo(`#${prev.id}`);
-      }
+      if (e.key === "j") scrollTo(`#${NAV[(idx + 1) % NAV.length].id}`);
+      if (e.key === "k") scrollTo(`#${NAV[(idx - 1 + NAV.length) % NAV.length].id}`);
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [active, scrollTo]);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-accent2/15 bg-background/70 backdrop-blur-md">
-      <div className="mx-auto flex h-12 max-w-6xl items-center gap-3 px-4 font-mono text-xs">
-        <span className="shrink-0 whitespace-nowrap text-accent2">
-          root@portfolio3d
+    <header
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-700 ${scrolled ? "border-b border-foreground/5 bg-background/55 backdrop-blur-xl" : "border-b border-transparent bg-transparent"}`}
+    >
+      <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-6">
+        <span className="shrink-0 whitespace-nowrap font-mono text-xs tracking-wide text-foreground/70">
+          kris<span className="text-muted">@</span>portfolio3d
         </span>
-        <span className="text-muted">:</span>
-        <span className="shrink-0 whitespace-nowrap text-muted">
-          ~/{NAV.find((n) => n.id === active)?.label ?? "~"}
-        </span>
-        <span className="text-accent">$</span>
-        <nav className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto md:gap-2">
+        <span className="hidden h-px flex-1 bg-foreground/5 sm:block" />
+        <nav className="flex min-w-0 items-center gap-1 overflow-x-auto md:gap-2">
           {NAV.map((n) => {
             const isActive = active === n.id;
             return (
               <button
                 key={n.id}
                 onClick={() => scrollTo(`#${n.id}`)}
-                className={`shrink-0 rounded px-2 py-1 transition-colors ${
+                aria-current={isActive ? "true" : undefined}
+                className={`group shrink-0 rounded px-3 py-1.5 font-mono text-xs transition-colors duration-300 ${
                   isActive
-                    ? "text-accent glow-lime"
-                    : "text-muted hover:text-accent2"
+                    ? "text-foreground"
+                    : "text-muted hover:text-foreground/80"
                 }`}
               >
+                <span
+                  aria-hidden
+                  className={`mr-1.5 align-middle text-[9px] ${isActive ? "text-accent" : "text-foreground/25 group-hover:text-foreground/50"}`}
+                >
+                  {n.num}
+                </span>
                 {n.label}
+                {isActive && (
+                  <span
+                    aria-hidden
+                    className="mx-auto mt-1 block h-px w-4 bg-accent/70"
+                  />
+                )}
               </button>
             );
           })}
         </nav>
-        <span aria-hidden className="ml-auto hidden shrink-0 whitespace-nowrap tabular-nums text-accent2/70 sm:inline">
-          {active.toUpperCase()}
-        </span>
-        <span aria-hidden className="term-cursor inline-block h-3.5 w-2 bg-accent" />
+        <span aria-hidden className="term-cursor hidden h-3 w-1.5 bg-accent/80 sm:block" />
       </div>
     </header>
   );

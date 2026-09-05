@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import { Code, Camera, MonitorPlay, Mail, Send } from "lucide-react";
+import { useState } from "react";
+import { Code, Camera, MonitorPlay, Mail, Copy, Check, Send } from "lucide-react";
 import { SectionTerm } from "@/components/section-term";
-import { socials } from "@/lib/data";
+import { Reveal } from "@/components/reveal";
+import { Magnetic } from "@/components/magnetic";
+import { socials, EMAIL } from "@/lib/data";
 
 const ICONS = {
   github: Code,
@@ -12,47 +14,47 @@ const ICONS = {
   mail: Mail,
 } as const;
 
-type Status = "idle" | "sending" | "done";
+const FIELD =
+  "w-full border-b border-foreground/12 bg-transparent py-3 font-mono text-sm text-foreground outline-none transition-colors duration-500 placeholder:text-foreground/25 focus:border-accent/60";
 
 export function ContactSection() {
-  const [status, setStatus] = useState<Status>("idle");
+  const [draft, setDraft] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const fd = new FormData(form);
-    const name = String(fd.get("name") ?? "").trim();
-    const email = String(fd.get("email") ?? "").trim();
-    const msg = String(fd.get("message") ?? "").trim();
-    if (!name || !email || !msg) return;
+  function toggleDraft() {
+    setDraft((v) => !v);
+    setCopied(false);
+  }
 
-    setStatus("sending");
-    window.setTimeout(() => setStatus("done"), 1100);
+  async function copyEmail() {
+    try {
+      await navigator.clipboard.writeText(EMAIL);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
   }
 
   return (
-    <section id="contact" className="relative min-h-dvh px-4 py-24">
-      <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-accent2/5 to-transparent" />
+    <section id="contact" className="relative px-6 py-28">
+      <div className="mx-auto max-w-6xl">
+        <Reveal>
+          <SectionTerm path="contact/" title="Get in Touch" index="04" />
+        </Reveal>
 
-      <div className="relative mx-auto max-w-6xl">
-        <SectionTerm path="contact/" title="vim ./contact.txt" accent="text-accent glow-lime" />
+        <div className="grid gap-16 md:grid-cols-[0.9fr_1.1fr]">
+          <div className="space-y-10">
+            <Reveal>
+              <p className="max-w-sm text-[15px] leading-7 text-muted">
+                Freelance cinematography, frontend builds, and design work.
+                TYBS and campus projects especially welcome.
+              </p>
+            </Reveal>
 
-        <p className="-mt-6 mb-10 font-mono text-sm text-muted">
-          <span className="text-accent">:</span>wq — then say hi, I write back fast.
-        </p>
-
-        <div className="grid items-start gap-10 md:grid-cols-2">
-          <div className="space-y-4 font-mono text-sm leading-7 text-muted">
-            <p>
-              <span className="text-accent2">$ grep -r &quot;open to work&quot; .</span>
-            </p>
-            <p>
-              Freelance cinematography, frontend builds, and design work — TYBS projects
-              welcome.
-            </p>
-            <div className="pt-2">
-              <p className="mb-3 text-xs uppercase tracking-widest text-accent2">
-                $ links --social
+            <Reveal delay={0.1}>
+              <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.3em] text-foreground/35">
+                find me — elsewhere
               </p>
               <ul className="flex flex-wrap gap-3">
                 {socials.map((s) => {
@@ -62,97 +64,116 @@ export function ContactSection() {
                       <a
                         href={s.href}
                         aria-label={s.label}
-                        className="neon-card flex h-11 w-11 items-center justify-center rounded-full"
+                        className="flex h-11 w-11 items-center justify-center rounded-full border border-foreground/10 text-foreground/50 transition-all duration-500 hover:border-foreground/40 hover:text-foreground"
                       >
-                        <Icon className="h-5 w-5 text-accent2 transition group-hover:text-accent" />
+                        <Icon className="h-[18px] w-[18px]" />
                       </a>
                     </li>
                   );
                 })}
               </ul>
-            </div>
-          </div>
+            </Reveal>
 
-          <div className="relative">
-            {status === "done" && <SuccessBurst />}
-            <form onSubmit={onSubmit} className="neon-card space-y-5 rounded-lg p-6">
-              <label className="block">
-                <span className="mb-1.5 block font-mono text-xs text-muted">
-                  name <span className="text-accent">$</span>
-                </span>
-                <input
-                  name="name"
-                  required
-                  placeholder="anon"
-                  className="w-full rounded border border-accent2/20 bg-transparent px-3 py-2 font-mono text-sm text-foreground outline-none transition focus:border-accent focus:shadow-[0_0_18px_rgba(0,255,136,0.25)] placeholder:text-muted/40"
-                />
-              </label>
-              <label className="block">
-                <span className="mb-1.5 block font-mono text-xs text-muted">
-                  email <span className="text-accent">$</span>
-                </span>
-                <input
-                  name="email"
-                  type="email"
-                  required
-                  placeholder="you@inbox.dev"
-                  className="w-full rounded border border-accent2/20 bg-transparent px-3 py-2 font-mono text-sm text-foreground outline-none transition focus:border-accent2 focus:shadow-[0_0_18px_rgba(0,217,255,0.25)] placeholder:text-muted/40"
-                />
-              </label>
-              <label className="block">
-                <span className="mb-1.5 block font-mono text-xs text-muted">
-                  message <span className="text-accent">$</span>
-                </span>
-                <textarea
-                  name="message"
-                  required
-                  rows={4}
-                  placeholder="attach brief or logline…"
-                  className="w-full resize-none rounded border border-accent2/20 bg-transparent px-3 py-2 font-mono text-sm text-foreground outline-none transition focus:border-accent3 focus:shadow-[0_0_18px_rgba(255,0,255,0.25)] placeholder:text-muted/40"
-                />
-              </label>
-
+            <Reveal delay={0.15}>
               <button
-                type="submit"
-                disabled={status !== "idle"}
-                className="inline-flex w-full items-center justify-center gap-2 rounded border border-accent bg-accent/10 px-4 py-2.5 font-mono text-sm font-bold text-accent transition hover:bg-accent hover:text-background disabled:opacity-60"
+                type="button"
+                onClick={copyEmail}
+                className="group flex w-full items-center justify-between rounded-xl border border-foreground/8 bg-white/[0.015] p-5 text-left transition-colors duration-500 hover:border-accent/30"
+                aria-live="polite"
               >
-                {status === "sending" ? (
-                  <span className="term-cursor">transferring…</span>
-                ) : (
-                  <>
-                    ./send_message <Send className="h-4 w-4" />
-                  </>
-                )}
+                <code className="font-mono text-xs text-muted">
+                  <span className="text-foreground/60">$ echo $CONTACT_EMAIL</span>
+                  <span className="mt-1 block truncate text-accent glow-lime">
+                    {EMAIL}
+                  </span>
+                </code>
+                <span className="ml-4 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-foreground/10 text-foreground/50 transition-all duration-500 group-hover:border-accent/40 group-hover:text-accent">
+                  {copied ? (
+                    <Check className="h-4 w-4" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                </span>
               </button>
-            </form>
+            </Reveal>
           </div>
+
+          <Reveal delay={0.1}>
+            <div className="relative">
+              {draft && <PulseRing />}
+              <form
+                onSubmit={(e) => e.preventDefault()}
+                action={`mailto:${EMAIL}`}
+                method="post"
+                encType="text/plain"
+                className="space-y-8"
+              >
+                <div className="grid gap-8 sm:grid-cols-2">
+                  <label className="block">
+                    <span className="mb-1 flex items-baseline justify-between font-mono text-[10px] uppercase tracking-[0.25em] text-foreground/35">
+                      name <span className="text-accent/70">01</span>
+                    </span>
+                    <input name="name" required placeholder="Your name" className={FIELD} />
+                  </label>
+                  <label className="block">
+                    <span className="mb-1 flex items-baseline justify-between font-mono text-[10px] uppercase tracking-[0.25em] text-foreground/35">
+                      email <span className="text-accent/70">02</span>
+                    </span>
+                    <input
+                      name="email"
+                      type="email"
+                      required
+                      placeholder="you@somewhere.com"
+                      className={FIELD}
+                    />
+                  </label>
+                </div>
+
+                <label className="block">
+                  <span className="mb-1 flex items-baseline justify-between font-mono text-[10px] uppercase tracking-[0.25em] text-foreground/35">
+                    message <span className="text-accent/70">03</span>
+                  </span>
+                  <textarea
+                    name="message"
+                    required
+                    rows={4}
+                    placeholder="A logline of your idea…"
+                    className={`${FIELD} resize-none`}
+                  />
+                </label>
+
+                <Magnetic>
+                  <button
+                    type="submit"
+                    onClick={toggleDraft}
+                    className="group relative w-full overflow-hidden rounded-full border border-foreground/15 py-3.5 font-mono text-xs uppercase tracking-[0.25em] text-foreground/85 transition-all duration-500 hover:border-accent/40"
+                  >
+                    <span className="relative z-10 flex items-center justify-center gap-2">
+                      open in your mail client <Send className="h-3.5 w-3.5" />
+                    </span>
+                    <span
+                      aria-hidden
+                      className="absolute inset-0 -translate-x-full bg-accent/[0.06] transition-transform duration-700 ease-out group-hover:translate-x-0"
+                    />
+                  </button>
+                </Magnetic>
+              </form>
+            </div>
+          </Reveal>
         </div>
       </div>
     </section>
   );
 }
 
-function SuccessBurst() {
+function PulseRing() {
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-lg">
-      {Array.from({ length: 18 }).map((_, i) => {
-        const angle = (i / 18) * Math.PI * 2;
-        const dist = 80 + (i % 5) * 36;
-        return (
-          <span
-            key={i}
-            className="burst-dot absolute left-1/2 top-1/3 h-2 w-2 rounded-sm"
-            style={
-              {
-                background: ["#00ff88", "#00d9ff", "#ff00ff"][i % 3],
-                "--dx": `${Math.cos(angle) * dist}px`,
-                "--dy": `${Math.sin(angle) * dist}px`,
-              } as React.CSSProperties
-            }
-          />
-        );
-      })}
+    <div aria-hidden className="pointer-events-none absolute -top-6 left-1/2 z-0 h-24 w-24 -translate-x-1/2">
+      <span className="pulse-ring absolute inset-0 rounded-full border border-accent/30" />
+      <span
+        className="pulse-ring absolute inset-0 rounded-full border border-accent/20"
+        style={{ animationDelay: "0.35s" }}
+      />
     </div>
   );
 }

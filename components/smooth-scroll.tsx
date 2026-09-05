@@ -15,15 +15,25 @@ export function useSmoothScroll() {
 
 const scrollApi: ScrollApi = { scrollTo: () => {} };
 
+// expo-out — starts fast, decelerates to a near-invisible stop
+const expoOut = (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t));
+
 export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const lenis = new Lenis({
-      lerp: 0.09,
-      wheelMultiplier: 1,
+      duration: 1.1,
+      easing: expoOut,
+      smoothWheel: true,
+      wheelMultiplier: 0.9,
+      touchMultiplier: 0.9,
     });
 
     scrollApi.scrollTo = (target) => {
-      lenis.scrollTo(target, { offset: -76, duration: 1.2 });
+      lenis.scrollTo(target, {
+        offset: -76,
+        duration: 1.4,
+        easing: expoOut,
+      });
     };
 
     let raf = 0;

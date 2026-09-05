@@ -1,44 +1,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion, type Variants } from "motion/react";
 import { useSmoothScroll } from "@/components/smooth-scroll";
 import { HeroParticles } from "@/components/particle-field";
+import { Magnetic } from "@/components/magnetic";
+import { EASE } from "@/components/reveal";
+import { useBoot } from "@/components/preloader";
 
 const BOOT_LINES: { prompt: string; output: string[] }[] = [
   {
     prompt: "whoami",
-    output: ["kris — cinematographer / frontend dev / designer / TYBS IT student"],
+    output: ["cinematographer · frontend dev · designer · TYBS IT student"],
   },
   {
     prompt: "neofetch --3d",
     output: [
-      "OS ........ linux-terminal@3d",
+      "OS ........ terminal@3d",
       "SHELL ..... zsh-r3f (realtime)",
-      "STACK ..... Next.js · Three.js · Motion",
-      "AESTHETIC .. cyber-retro",
-      "STATUS .... shipping",
+      "STACK ..... Next.js · Three.js · Motion · Lenis",
+      "STATUS .... shooting official",
     ],
   },
 ];
-
-function useTypedText(text: string, speed = 38, startDelay = 0) {
-  const [count, setCount] = useState(0);
-  const [started, setStarted] = useState(false);
-
-  useEffect(() => {
-    const t = setTimeout(() => setStarted(true), startDelay);
-    return () => clearTimeout(t);
-  }, [startDelay]);
-
-  useEffect(() => {
-    if (!started) return;
-    if (count >= text.length) return;
-    const t = setTimeout(() => setCount((c) => c + 1), speed);
-    return () => clearTimeout(t);
-  }, [started, count, text, speed]);
-
-  return text.slice(0, count);
-}
 
 function BootTerminal() {
   const [step, setStep] = useState(0);
@@ -48,113 +32,191 @@ function BootTerminal() {
     if (step >= BOOT_LINES.length) return;
     const max = BOOT_LINES[step].prompt.length;
     const t = setTimeout(() => {
-      if (typed < max) {
-        setTyped((t) => t + 1);
-      } else {
-        setStep((s) => s + 1);
+      if (typed < max) setTyped((v) => v + 1);
+      else {
+        setStep((v) => v + 1);
         setTyped(0);
       }
-    }, 55);
+    }, 60);
     return () => clearTimeout(t);
   }, [step, typed]);
 
-  const visible = BOOT_LINES.slice(0, Math.min(step + 1, BOOT_LINES.length));
+  const visible = BOOT_LINES.slice(0, step + 1);
 
   return (
-    <div className="neon-card w-full max-w-xl rounded-lg p-5 font-mono text-[13px] leading-6">
-      <div className="mb-3 flex items-center gap-2 border-b border-accent2/10 pb-3">
-        <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
-        <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
-        <span className="h-3 w-3 rounded-full bg-[#28c840]" />
-        <span className="ml-2 text-[11px] text-muted">portfolio3d — bash</span>
+    <div className="cinematic-card overflow-hidden rounded-xl">
+      <div className="flex items-center gap-2 border-b border-foreground/5 px-5 py-3">
+        <span className="h-2.5 w-2.5 rounded-full bg-[#3a3f52]" />
+        <span className="h-2.5 w-2.5 rounded-full bg-[#3a3f52]" />
+        <span className="h-2.5 w-2.5 rounded-full bg-[#40455c]" />
+        <span className="ml-3 font-mono text-[10px] uppercase tracking-[0.25em] text-foreground/30">
+          session — portfolio3d
+        </span>
       </div>
-
-      {visible.map((line, i) => {
-        const isLatest = i === visible.length - 1;
-        const showTyped = isLatest ? line.prompt.slice(0, typed) : line.prompt;
-        const showOutput = isLatest ? step > i && typed >= line.prompt.length : true;
-        return (
-          <div key={i}>
-            <p>
-              <span className="text-accent2">kris</span>
-              <span className="text-muted">@</span>
-              <span className="text-muted">portfolio3d</span>
-              <span className="text-accent">:$ </span>
-              <span className="text-foreground">{showTyped}</span>
-              {isLatest && (
-                <span aria-hidden className="term-cursor ml-0.5 inline-block h-3 w-1.5 bg-accent align-middle" />
-              )}
-            </p>
-            {showOutput &&
-              line.output.map((o, j) => (
-                <p key={j} className="pl-4 text-accent2/90">
-                  {o}
-                </p>
-              ))}
-          </div>
-        );
-      })}
+      <div className="p-6 font-mono text-[13px] leading-7">
+        {visible.map((line, i) => {
+          const isLatest = i === visible.length - 1;
+          const showTyped = isLatest ? line.prompt.slice(0, typed) : line.prompt;
+          const showOutput =
+            isLatest ? step > i && typed >= line.prompt.length : true;
+          return (
+            <div key={i}>
+              <p className="text-foreground/70">
+                <span className="text-accent">$</span> {showTyped}
+                {isLatest && (
+                  <span
+                    aria-hidden
+                    className="term-cursor ml-1 inline-block h-3.5 w-1.5 bg-accent/80 align-middle"
+                  />
+                )}
+              </p>
+              {showOutput &&
+                line.output.map((o, j) => (
+                  <p key={j} className="pl-6 text-muted">
+                    {o}
+                  </p>
+                ))}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
 
-const HEADLINE = "I build worlds at the intersection of code & camera.";
+const container: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.16, delayChildren: 0.18 } },
+};
+
+const item: Variants = {
+  hidden: { opacity: 0, y: 30, filter: "blur(10px)" },
+  show: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 1.2, ease: EASE },
+  },
+};
 
 export function Hero() {
   const { scrollTo } = useSmoothScroll();
-  const headline = useTypedText(HEADLINE, 34, 2600);
+  const { booted } = useBoot();
 
   return (
-    <section id="home" className="relative flex min-h-dvh items-center overflow-hidden px-4 pt-16">
-      <HeroParticles />
+    <section
+      id="home"
+      className="relative flex min-h-dvh items-center overflow-hidden px-6 pt-16"
+    >
+      {/* environment enters slowly — never commanding */}
+      <motion.div
+        aria-hidden
+        className="absolute inset-0"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: booted ? 1 : 0 }}
+        transition={{ duration: 2.4, ease: "easeOut", delay: 0.1 }}
+      >
+        <HeroParticles />
+      </motion.div>
 
-      <div className="mx-auto grid w-full max-w-6xl items-center gap-10 md:grid-cols-2">
+      {/* source light establishes focus */}
+      <motion.div
+        aria-hidden
+        className="absolute left-[8%] top-[26%] h-[46vw] max-h-[640px] w-[46vw] max-w-[640px] rounded-full"
+        initial={{ opacity: 0, scale: 0.85 }}
+        animate={{
+          opacity: booted ? 1 : 0,
+          scale: booted ? 1 : 0.9,
+        }}
+        transition={{ duration: 2.2, ease: EASE, delay: 0.1 }}
+        style={{
+          background:
+            "radial-gradient(circle, rgba(130,150,255,0.07), rgba(0,217,255,0.027) 45%, transparent 68%)",
+        }}
+      />
+
+      <motion.div
+        className="mx-auto grid w-full max-w-6xl items-center gap-14 md:grid-cols-[1.1fr_0.9fr]"
+        variants={container}
+        initial="hidden"
+        animate={booted ? "show" : "hidden"}
+      >
         <div>
-          <p className="mb-4 font-mono text-sm text-accent3 glow-magenta">
-            $ ls ./intro
-          </p>
-          <h1
-            data-text={HEADLINE}
-            className="glitch text-3xl font-black leading-tight text-foreground md:text-5xl"
+          <motion.p
+            variants={item}
+            className="mb-8 font-mono text-xs uppercase tracking-[0.35em] text-muted"
           >
-            {headline}
-            <span aria-hidden className="term-cursor ml-1 inline-block h-6 w-2.5 bg-accent align-middle" />
-          </h1>
-          <p className="mt-5 max-w-md font-mono text-sm leading-6 text-muted">
-            <span className="text-accent">[</span> cinematography, interactive frontend
-            & design — rendered live in three dimensions{" "}
-            <span className="text-accent">]</span>
-          </p>
+            <span className="text-accent">●</span> opening light — part 01
+          </motion.p>
 
-          <div className="mt-8 flex flex-wrap gap-3 font-mono text-sm">
-            <button
-              onClick={() => scrollTo("#work")}
-              className="rounded border border-accent px-4 py-2 text-accent glow-lime transition hover:bg-accent hover:text-background"
-            >
-              cd projects/
-            </button>
-            <button
-              onClick={() => scrollTo("#contact")}
-              className="rounded border border-accent2/40 px-4 py-2 text-accent2 transition hover:bg-accent2/10"
-            >
-              cat contact →
-            </button>
-          </div>
+          <motion.h1
+            variants={item}
+            className="title-display font-display text-4xl font-medium leading-[1.05] text-foreground md:text-6xl"
+          >
+            I direct light,
+            <br />
+            pixels <span className="font-serif-accent italic">and</span>
+            <br />
+            interaction.
+          </motion.h1>
+
+          <motion.p
+            variants={item}
+            className="mt-7 max-w-md text-[15px] leading-7 text-muted"
+          >
+            Cinematographer and frontend developer — framing stories on set and
+            in the browser. Currently an IT student at TYBS.
+          </motion.p>
+
+          <motion.div
+            variants={item}
+            className="mt-10 flex flex-wrap gap-4 font-mono text-sm"
+          >
+            <Magnetic>
+              <button
+                onClick={() => scrollTo("#work")}
+                className="group relative overflow-hidden rounded-full border border-foreground/15 px-6 py-3 text-foreground/90 transition-colors duration-500 hover:border-accent/40"
+              >
+                <span className="relative z-10">view work</span>
+                <span
+                  aria-hidden
+                  className="absolute inset-0 -translate-x-full bg-accent/10 transition-transform duration-700 ease-out group-hover:translate-x-0"
+                />
+              </button>
+            </Magnetic>
+            <Magnetic>
+              <button
+                onClick={() => scrollTo("#contact")}
+                className="rounded-full border border-foreground/10 px-6 py-3 text-muted transition-all duration-500 hover:border-foreground/30 hover:text-foreground"
+              >
+                open contact
+              </button>
+            </Magnetic>
+          </motion.div>
         </div>
 
-        <BootTerminal />
-      </div>
+        <motion.div
+          variants={item}
+          className="w-full"
+          initial={{ opacity: 0, y: 26 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, ease: EASE, delay: 0.15 }}
+        >
+          <BootTerminal />
+        </motion.div>
+      </motion.div>
 
-      <button
+      <motion.button
         onClick={() => scrollTo("#skills")}
         aria-label="Scroll to skills"
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-xs text-muted transition hover:text-accent"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: booted ? 1 : 0 }}
+        transition={{ duration: 1.4, ease: "easeOut", delay: 2.2 }}
+        className="absolute bottom-7 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-foreground/35 transition-colors duration-500 hover:text-foreground/70"
       >
-        <span className="mb-2 block text-center">Scroll to explore</span>
-        <span className="mx-auto block h-8 w-5 rounded-full border border-current p-1">
-          <span className="block h-2 w-full animate-bounce rounded-full bg-accent" />
-        </span>
-      </button>
+        scroll
+        <span className="block h-9 w-px bg-gradient-to-b from-transparent via-foreground/30 to-transparent" />
+      </motion.button>
     </section>
   );
 }

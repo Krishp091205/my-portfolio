@@ -38,49 +38,66 @@ export const skills: Skill[] = [
 ];
 
 export type Project = {
+  slug: string;
   title: string;
   blurb: string;
   tags: string[];
   color: string;
-  href: string;
   badge?: string;
+  detail: string[];
 };
 
 export const projects: Project[] = [
   {
+    slug: "frame-runner",
     title: "Frame Runner",
     blurb:
       "Cinematic short — handheld energy, grade pushed teal-orange, sound designed in the edit.",
     tags: ["DaVinci Resolve", "Premiere Pro", "Color Grading"],
     color: "#ff00ff",
-    href: "#contact",
     badge: "Reel 2024",
+    detail: [
+      "A short built around rhythm — every cut lands on the edit.",
+      "Handled the full pipeline: shoot, colour, edit, and mix.",
+    ],
   },
   {
+    slug: "gymverse",
     title: "GYMVERSE",
     blurb:
       "3D web game hub built with Next.js, React Three Fiber and custom motion systems.",
     tags: ["Next.js", "Three.js", "Tailwind"],
     color: "#00ff88",
-    href: "https://github.com/",
     badge: "Work in progress",
+    detail: [
+      "A 3D scene with a locked-video hero and hand-tuned inertia.",
+      "Zero-dependency motion — physics and audio wired by hand.",
+    ],
   },
   {
+    slug: "ui-ux-pro-skills",
     title: "UI/UX Pro Skills",
     blurb:
       "Agent skill system that turns raw product briefs into production-ready UI systems.",
     tags: ["Figma", "Design Systems", "AI Workflow"],
     color: "#00d9ff",
-    href: "https://github.com/",
+    detail: [
+      "A repeatable process: brief → tokens → components → handoff.",
+      "Design-system-first so teams ship consistent interfaces.",
+    ],
   },
   {
+    slug: "this-portfolio",
     title: "This Portfolio",
     blurb:
-      "A Linux-terminal-meets-3D-space experience — the very site you are scrolling.",
+      "A cinema-meets-terminal experience — the very site you are scrolling.",
     tags: ["Next.js", "R3F", "Motion", "Lenis"],
     color: "#e0e0e0",
-    href: "https://github.com/",
     badge: "You are here",
+    detail: [
+      "Treated as a film — atmosphere, lighting, and one continuous camera move.",
+      "Grain, ease curves, and reduced-motion all respected.",
+    ],
   },
 ];
 
@@ -121,9 +138,20 @@ export type Social = {
   href: string;
 };
 
+export const EMAIL =
+  "Krishp091205@users.noreply.github.com"; /* TODO: replace with your real inbox */
+
+export const REEL = {
+  /* TODO: replace with your own footage or poster */
+  video: "https://raw.githubusercontent.com/gughigug/run-hero-assets/main/Legs_sprinting_on_pavement_1080p_202608312152.mp4",
+  poster:
+    "https://raw.githubusercontent.com/gughigug/run-hero-assets/main/bg-immersive.jpg",
+};
+
+/* TODO: swap instagram / youtube below for your real handles */
 export const socials: Social[] = [
-  { label: "github", icon: "github", href: "https://github.com/" },
+  { label: "github", icon: "github", href: "https://github.com/Krishp091205" },
   { label: "instagram", icon: "instagram", href: "https://instagram.com/" },
   { label: "youtube", icon: "youtube", href: "https://youtube.com/" },
-  { label: "mail", icon: "mail", href: "mailto:hello@portfolio.local" },
+  { label: "mail", icon: "mail", href: `mailto:${EMAIL}` },
 ];

@@ -54,11 +54,11 @@ function OrbitNode({
     <group ref={group}>
       <mesh>
         {geo}
-        <meshBasicMaterial wireframe color={color} transparent opacity={0.9} />
+        <meshBasicMaterial wireframe color={color} transparent opacity={0.65} />
       </mesh>
       <mesh scale={0.985}>
         {fill}
-        <meshBasicMaterial color={color} transparent opacity={0.08} />
+        <meshBasicMaterial color={color} transparent opacity={0.04} />
       </mesh>
     </group>
   );
@@ -79,21 +79,21 @@ function CenterCore() {
   return (
     <mesh ref={ref}>
       <icosahedronGeometry args={[1.1, 1]} />
-      <meshBasicMaterial wireframe color="#00d9ff" transparent opacity={0.7} />
+      <meshBasicMaterial wireframe color="#00d9ff" transparent opacity={0.45} />
     </mesh>
   );
 }
 
 export function SkillsSection() {
   return (
-    <section id="skills" className="relative min-h-dvh overflow-hidden px-4 py-24">
-      <div aria-hidden className="grid-bg absolute inset-0" />
+    <section id="skills" className="relative min-h-dvh overflow-hidden px-6 py-28">
+      <div aria-hidden className="grid-bg absolute inset-0 opacity-70" />
 
       <div className="relative mx-auto max-w-6xl">
-        <SectionTerm path="skills/" title="ls ./skills" accent="text-accent glow-lime" />
+        <SectionTerm path="skills/" title="Capabilities" index="01" />
 
-        <div className="grid items-center gap-8 lg:grid-cols-2">
-          <div className="relative h-[420px] overflow-hidden rounded-lg border border-accent2/10">
+        <div className="grid items-center gap-10 lg:grid-cols-2">
+          <div className="cinematic-card relative h-[420px] overflow-hidden rounded-2xl">
             <Canvas
               dpr={[1, 1.75]}
               camera={{ position: [0, 0, 7.5], fov: 55 }}
@@ -106,8 +106,8 @@ export function SkillsSection() {
                   key={s.title}
                   shape={s.icon}
                   color={s.color}
-                  radius={2.4 + i * 0.25}
-                  speed={0.42 + i * 0.09}
+                  radius={3 + i * 0.35}
+                  speed={0.28 + i * 0.06}
                   phase={(i / skills.length) * Math.PI * 2}
                 />
               ))}
@@ -136,20 +136,21 @@ function SkillCard({ skill }: { skill: Skill }) {
           : GraduationCap;
 
   return (
-    <article
-      className="neon-card rounded-lg p-5 font-mono group"
-      style={{ "--glow": skill.color } as React.CSSProperties}
-    >
-      <div className="mb-3 flex items-center justify-between">
-        <Icon className="h-5 w-5" style={{ color: skill.color }} />
-        <span className="text-xs text-muted">{skill.path}</span>
+    <article className="cinematic-card group rounded-xl p-6">
+      <div className="flex items-center justify-between">
+        <Icon className="h-4 w-4" style={{ color: skill.color }} />
+        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-foreground/30">
+          {skill.path}
+        </span>
       </div>
-      <h3 className="text-sm font-bold text-foreground">{skill.title}</h3>
-      <ul className="mt-3 flex flex-wrap gap-1.5">
+      <h3 className="mt-6 font-display text-lg font-medium text-foreground">
+        {skill.title}
+      </h3>
+      <ul className="mt-4 flex flex-wrap gap-2">
         {skill.tech.map((t) => (
           <li
             key={t}
-            className="rounded bg-white/5 px-2 py-0.5 text-[11px] text-muted"
+            className="rounded-full border border-foreground/8 px-3 py-1 font-mono text-[11px] text-foreground/45"
           >
             {t}
           </li>

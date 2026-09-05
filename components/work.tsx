@@ -1,120 +1,187 @@
-import { Film, ArrowUpRight } from "lucide-react";
+"use client";
+
+import { useRef, useState } from "react";
+import { ArrowUpRight, Film, Pause, Play } from "lucide-react";
+import Link from "next/link";
 import { SectionTerm } from "@/components/section-term";
-import { projects } from "@/lib/data";
+import { Reveal } from "@/components/reveal";
+import { projects, REEL, type Project } from "@/lib/data";
 
 export function WorkSection() {
   return (
-    <section id="work" className="relative min-h-dvh px-4 py-24">
-      <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-transparent via-accent3/5 to-transparent" />
+    <section id="work" className="relative px-6 py-28">
+      <div className="mx-auto max-w-6xl">
+        <Reveal>
+          <SectionTerm path="projects/" title="Selected Work" index="02" />
+        </Reveal>
 
-      <div className="relative mx-auto max-w-6xl">
-        <SectionTerm path="projects/" title="ls ./projects" accent="text-accent2 glow-cyan" />
+        <Reveal delay={0.1}>
+          <p className="mb-14 max-w-2xl text-[15px] leading-7 text-muted">
+            A few scenes from two sets — the frontend and the film studio. No
+            statistics, no exaggeration — just work worth watching.
+          </p>
+        </Reveal>
 
-        <p className="-mt-6 mb-10 max-w-2xl font-mono text-sm leading-6 text-muted">
-          <span className="text-accent3">[</span> selected work — frontend builds and
-          finished frames <span className="text-accent3">]</span>
-        </p>
-
-        <div className="grid gap-5 md:grid-cols-2">
-          {projects.map((p) => (
-            <article
-              key={p.title}
-              className="neon-card group relative rounded-lg overflow-hidden"
-            >
-              <div
-                aria-hidden
-                className="relative h-44 w-full overflow-hidden"
-                style={{ background: `radial-gradient(circle at 20% 30%, ${p.color}22, transparent 60%), #0a0e27` }}
-              >
-                <div
-                  className="absolute inset-0 opacity-20 transition-opacity duration-500 group-hover:opacity-40"
-                  style={{
-                    backgroundImage: `linear-gradient(${p.color}33 1px, transparent 1px), linear-gradient(90deg, ${p.color}33 1px, transparent 1px)`,
-                    backgroundSize: "26px 26px",
-                  }}
-                />
-                <span className="absolute bottom-3 left-3 rounded border border-white/10 px-2 py-0.5 font-mono text-[10px] text-foreground/70">
-                  ./{p.title.toLowerCase().replace(/[^a-z0-9]/g, "-")}.frame
-                </span>
-                {p.badge && (
-                  <span
-                    className="absolute right-3 top-3 rounded px-2 py-0.5 font-mono text-[10px] font-bold text-background"
-                    style={{ background: p.color }}
-                  >
-                    {p.badge}
-                  </span>
-                )}
-              </div>
-
-              <div className="p-5">
-                <h3
-                  data-text={p.title}
-                  className="glitch text-lg font-black text-foreground"
-                >
-                  {p.title}
-                </h3>
-                <p className="mt-2 font-mono text-[13px] leading-6 text-muted">
-                  {p.blurb}
-                </p>
-                <ul className="mt-4 flex flex-wrap gap-1.5">
-                  {p.tags.map((t) => (
-                    <li
-                      key={t}
-                      className="rounded bg-white/5 px-2 py-0.5 font-mono text-[11px] text-accent2/80"
-                    >
-                      {t}
-                    </li>
-                  ))}
-                </ul>
-
-                <a
-                  href={p.href}
-                  className="mt-5 inline-flex items-center gap-1.5 font-mono text-xs text-accent transition-all hover:tracking-wider hover:text-accent3"
-                >
-                  open portal <ArrowUpRight className="h-3.5 w-3.5" />
-                </a>
-              </div>
-            </article>
+        <div className="grid gap-8 md:grid-cols-2">
+          {projects.map((p, i) => (
+            <Reveal key={p.title} delay={(i % 2) * 0.12}>
+              <ProjectCard project={p} />
+            </Reveal>
           ))}
         </div>
 
-        <div className="mt-16">
-          <p className="mb-4 font-mono text-sm text-accent3 glow-magenta">
-            $ ls ./cinema/reels.mp4
+        <Reveal className="mt-24">
+          <p className="mb-6 font-mono text-xs uppercase tracking-[0.3em] text-foreground/40">
+            frames — director&apos;s reel
           </p>
-          <div className="grid gap-5 md:grid-cols-2">
-            <ReelCard label="reel-01-2024" />
-            <ReelCard label="reel-02-2025" />
-          </div>
-        </div>
+          <ReelCard />
+        </Reveal>
       </div>
     </section>
   );
 }
 
-function ReelCard({ label }: { label: string }) {
+function ProjectCard({ project }: { project: Project }) {
+  const ref = useRef<HTMLElement>(null);
+
+  function onMove(e: React.MouseEvent<HTMLElement>) {
+    const el = ref.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty("--mx", `${e.clientX - r.left}px`);
+    el.style.setProperty("--my", `${e.clientY - r.top}px`);
+  }
+
   return (
-    <div className="neon-card group relative overflow-hidden rounded-lg">
-      <div
-        aria-hidden
-        className="relative flex h-52 items-center justify-center overflow-hidden"
-        style={{
-          background:
-            "linear-gradient(135deg, rgba(255,0,255,0.12), transparent 45%), radial-gradient(circle at 80% 20%, rgba(0,217,255,0.18), transparent 55%)",
-        }}
+    <article ref={ref} onMouseMove={onMove} className="group relative">
+      <Link
+        href={`/work/${project.slug}`}
+        aria-label={`${project.title} — case study`}
+        className="cinematic-card block overflow-hidden rounded-2xl"
       >
-        <div className="grid-bg absolute inset-0 opacity-60" />
-        <span className="relative flex h-14 w-14 items-center justify-center rounded-full border border-accent3/50 bg-accent3/10 transition group-hover:scale-110 group-hover:bg-accent3/30">
-          <Film className="h-6 w-6 text-accent3" />
-        </span>
-        <span className="absolute bottom-3 left-3 font-mono text-[10px] text-foreground/60">
-          ● REC — {label}
-        </span>
+        <div className="relative aspect-[16/10] overflow-hidden bg-background">
+          <div className="absolute inset-0 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.045]">
+            <div
+              aria-hidden
+              className="absolute inset-0"
+              style={{
+                background: `radial-gradient(circle at 28% 24%, ${project.color}14, transparent 55%), linear-gradient(160deg, #080a14, #0a0d1c)`,
+              }}
+            />
+            <div aria-hidden className="grid-bg absolute inset-0 opacity-70" />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+              style={{
+                background:
+                  "radial-gradient(420px circle at var(--mx, 60%) var(--my, 40%), rgba(255,255,255,0.05), transparent 70%)",
+              }}
+            />
+          </div>
+
+          <span className="absolute left-4 top-4 flex items-center gap-2 rounded-full border border-foreground/10 bg-background/50 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-foreground/60 backdrop-blur-md">
+            <span
+              className="h-1.5 w-1.5 rounded-full"
+              style={{ background: project.color }}
+            />
+            {project.badge ?? "case study"}
+          </span>
+
+          <span className="absolute bottom-4 right-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-foreground/40 transition-all duration-500 group-hover:text-foreground/80">
+            open <ArrowUpRight className="h-3.5 w-3.5" />
+          </span>
+        </div>
+
+        <div className="p-7 md:p-9">
+          <h3
+            data-text={project.title}
+            className="glitch title-display font-display text-2xl font-medium text-foreground md:text-3xl"
+          >
+            {project.title}
+          </h3>
+          <p className="mt-3 text-[14px] leading-7 text-muted">
+            {project.blurb}
+          </p>
+          <ul className="mt-6 flex flex-wrap gap-2">
+            {project.tags.map((t) => (
+              <li
+                key={t}
+                className="rounded-full border border-foreground/8 px-3 py-1 font-mono text-[11px] text-foreground/50"
+              >
+                {t}
+              </li>
+            ))}
+          </ul>
+          <span className="mt-7 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-foreground/60 transition-colors duration-500 group-hover:text-accent">
+            enter case <ArrowUpRight className="h-3.5 w-3.5" />
+          </span>
+        </div>
+      </Link>
+    </article>
+  );
+}
+
+function ReelCard() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [paused, setPaused] = useState(false);
+
+  function play() {
+    videoRef.current?.play().catch(() => {});
+  }
+
+  function pause() {
+    videoRef.current?.pause();
+  }
+
+  function toggle() {
+    if (paused) {
+      pause();
+    } else {
+      play();
+    }
+    setPaused((v) => !v);
+  }
+
+  return (
+    <div
+      className="cinematic-card filmstrip group relative rounded-2xl"
+      onMouseEnter={play}
+      onMouseLeave={pause}
+    >
+      <div className="relative flex aspect-video items-center justify-center overflow-hidden bg-black">
+        <video
+          ref={videoRef}
+          src={REEL.video}
+          poster={REEL.poster}
+          preload="metadata"
+          playsInline
+          loop
+          muted
+          controls={false}
+          className="absolute inset-0 h-full w-full object-cover opacity-80 transition-opacity duration-700 group-hover:opacity-100"
+        />
+        <div aria-hidden className="absolute inset-0 bg-black/20" />
+        <button
+          type="button"
+          onClick={toggle}
+          aria-label={paused ? "pause reel" : "play reel"}
+          className="relative flex h-16 w-16 items-center justify-center rounded-full border border-foreground/20 bg-background/40 text-foreground/70 backdrop-blur-md transition-all duration-700 group-hover:border-foreground/40 group-hover:text-foreground"
+        >
+          {paused ? (
+            <Pause className="h-6 w-6" />
+          ) : (
+            <Play className="ml-0.5 h-6 w-6" />
+          )}
+        </button>
       </div>
-      <div className="flex items-center justify-between p-4 font-mono text-xs text-muted">
-        <span>{label}</span>
-        <span className="text-accent2 transition group-hover:text-accent">
-          play → open in cinematography
+      <div className="flex items-center justify-between border-t border-foreground/5 px-6 py-4 font-mono text-[10px] uppercase tracking-[0.25em] text-foreground/40">
+        <span className="flex items-center gap-2">
+          <Film className="h-3.5 w-3.5" />
+          reel — 2026 workprint
+        </span>
+        <span className="flex items-center gap-2">
+          <span className="h-1.5 w-1.5 rounded-full bg-accent/70" />
+          rec
         </span>
       </div>
     </div>

@@ -15,7 +15,7 @@ function mulberry32(seed: number) {
   };
 }
 
-function ParticleField({ count = 420 }: { count?: number }) {
+function ParticleField({ count = 260 }: { count?: number }) {
   const ref = useRef<THREE.Points>(null);
 
   const positions = useMemo(() => {
@@ -43,8 +43,8 @@ function ParticleField({ count = 420 }: { count?: number }) {
 
   useFrame((_, delta) => {
     if (!ref.current) return;
-    ref.current.rotation.y += delta * 0.025;
-    ref.current.rotation.x = Math.sin(ref.current.rotation.y * 0.25) * 0.08;
+    ref.current.rotation.y += delta * 0.012;
+    ref.current.rotation.x = Math.sin(ref.current.rotation.y * 0.3) * 0.05;
   });
 
   return (
@@ -58,7 +58,7 @@ function ParticleField({ count = 420 }: { count?: number }) {
         sizeAttenuation
         vertexColors
         transparent
-        opacity={0.85}
+        opacity={0.4}
         depthWrite={false}
         blending={THREE.AdditiveBlending}
       />
