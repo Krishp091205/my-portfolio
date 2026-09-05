@@ -34,7 +34,10 @@ export function Cursor() {
       const hit = Boolean(
         target?.closest?.("a, button, input, textarea, select, [data-cursor]")
       );
-      setInteractive(hit);
+      setInteractive((prev) => {
+        if (prev !== hit) return hit;
+        return prev;
+      });
       document.documentElement.classList.toggle("cus-interactive", hit);
     };
 

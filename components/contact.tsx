@@ -102,7 +102,6 @@ export function ContactSection() {
             <div className="relative">
               {draft && <PulseRing />}
               <form
-                onSubmit={(e) => e.preventDefault()}
                 action={`mailto:${EMAIL}`}
                 method="post"
                 encType="text/plain"

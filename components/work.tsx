@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Film, Pause, Play } from "lucide-react";
 import Link from "next/link";
 import { SectionTerm } from "@/components/section-term";
@@ -123,31 +123,34 @@ function ProjectCard({ project }: { project: Project }) {
 
 function ReelCard() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [paused, setPaused] = useState(false);
+  const [playing, setPlaying] = useState(false);
 
-  function play() {
+  useEffect(() => {
+    if (videoRef.current) videoRef.current.muted = true;
+  }, []);
+
+  function enter() {
     videoRef.current?.play().catch(() => {});
   }
 
-  function pause() {
+  function leave() {
     videoRef.current?.pause();
   }
 
   function toggle() {
-    if (paused) {
-      pause();
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) {
+      video.play().catch(() => {});
+      setPlaying(true);
     } else {
-      play();
+      video.pause();
+      setPlaying(false);
     }
-    setPaused((v) => !v);
   }
 
   return (
-    <div
-      className="cinematic-card filmstrip group relative rounded-2xl"
-      onMouseEnter={play}
-      onMouseLeave={pause}
-    >
+    <div className="cinematic-card filmstrip group relative rounded-2xl" onMouseEnter={enter} onMouseLeave={leave}>
       <div className="relative flex aspect-video items-center justify-center overflow-hidden bg-black">
         <video
           ref={videoRef}
@@ -158,16 +161,17 @@ function ReelCard() {
           loop
           muted
           controls={false}
+          disablePictureInPicture
           className="absolute inset-0 h-full w-full object-cover opacity-80 transition-opacity duration-700 group-hover:opacity-100"
         />
         <div aria-hidden className="absolute inset-0 bg-black/20" />
         <button
           type="button"
           onClick={toggle}
-          aria-label={paused ? "pause reel" : "play reel"}
+          aria-label={playing ? "pause reel" : "play reel"}
           className="relative flex h-16 w-16 items-center justify-center rounded-full border border-foreground/20 bg-background/40 text-foreground/70 backdrop-blur-md transition-all duration-700 group-hover:border-foreground/40 group-hover:text-foreground"
         >
-          {paused ? (
+          {playing ? (
             <Pause className="h-6 w-6" />
           ) : (
             <Play className="ml-0.5 h-6 w-6" />

@@ -23,6 +23,7 @@ export function Preloader({ children }: { children: ReactNode }) {
   const reduced = useReducedMotion();
   const [booted, setBooted] = useState(false);
   const [gone, setGone] = useState(false);
+  const [finished, setFinished] = useState(false);
   const [step, setStep] = useState(0);
 
   useEffect(() => {
@@ -30,6 +31,7 @@ export function Preloader({ children }: { children: ReactNode }) {
     if (reduced) {
       timers.push(setTimeout(() => setBooted(true), 0));
       timers.push(setTimeout(() => setGone(true), 32));
+      timers.push(setTimeout(() => setFinished(true), 128));
       return () => timers.forEach(clearTimeout);
     }
     BOOT_STEPS.forEach((_, i) => {
@@ -37,7 +39,10 @@ export function Preloader({ children }: { children: ReactNode }) {
     });
     timers.push(setTimeout(() => setBooted(true), 220 + BOOT_STEPS.length * 260));
     timers.push(
-      setTimeout(() => setGone(true), 220 + BOOT_STEPS.length * 260 + 800)
+      setTimeout(() => setGone(true), 220 + BOOT_STEPS.length * 260 + 300)
+    );
+    timers.push(
+      setTimeout(() => setFinished(true), 220 + BOOT_STEPS.length * 260 + 1250)
     );
     return () => timers.forEach(clearTimeout);
   }, [reduced]);
@@ -53,7 +58,7 @@ export function Preloader({ children }: { children: ReactNode }) {
   return (
     <BootContext.Provider value={{ booted }}>
       {children}
-      {!gone && (
+      {!finished && (
         <motion.div
           aria-hidden
           className="fixed inset-0 z-[100] flex items-center justify-center bg-background"
