@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="28" fill="#05060c" />
+  <rect
+    x="1.5"
+    y="1.5"
+    width="125"
+    height="125"
+    rx="26.5"
+    fill="none"
+    stroke="#232741"
+    stroke-width="3"
+  />
+  <text
+    x="28"
+    y="88"
+    font-family="ui-monospace, SFMono-Regular, Menlo, monospace"
+    font-size="64"
+    font-weight="700"
+    fill="#e7e9f0"
+  >
+    K
+  </text>
+  <text
+    x="52"
+    y="96"
+    font-family="ui-monospace, SFMono-Regular, Menlo, monospace"
+    font-size="64"
+    font-weight="700"
+    fill="#00d9ff"
+  >
+    &gt;
+  </text>
+  <path
+    d="M72 66h24M72 90h24"
+    stroke="#ff00ff"
+    stroke-width="6"
+    stroke-linecap="round"
+  />
+  <circle cx="102" cy="26" r="5" fill="#00ff88" />
+</svg>
