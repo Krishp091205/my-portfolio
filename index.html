@@ -155,6 +155,23 @@ h1, h2, h3, p { margin: 0; }
   height: 16px;
 }
 
+.port-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--label);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.port-link:hover {
+  color: var(--cream);
+}
+
 /* ---------- product card ---------- */
 
 .product-card {
@@ -446,6 +463,7 @@ h1, h2, h3, p { margin: 0; }
             </svg>
           </button>
         </div>
+        <a class="port-link fade-up-reveal" data-delay="0.8" href="/my-portfolio/app/">open the full portfolio <span aria-hidden="true">&rarr;</span></a>
       </div>
 
       <article class="product-card">

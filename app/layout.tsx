@@ -35,7 +35,7 @@ const instrumentSerif = Instrument_Serif({
 const siteUrl =
   process.env.SITE_URL ||
   process.env.VERCEL_URL ||
-  "https://krishp091205.github.io/my-portfolio";
+  "https://krishp091205.github.io/my-portfolio/app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

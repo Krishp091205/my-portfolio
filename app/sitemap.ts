@@ -4,7 +4,7 @@ import { projects } from "@/lib/data";
 const base =
   process.env.VERCEL_URL
     ? `https://${process.env.VERCEL_URL}`
-    : "https://krishp091205.github.io/my-portfolio";
+    : "https://krishp091205.github.io/my-portfolio/app";
 
 export const dynamic = "force-static";
 

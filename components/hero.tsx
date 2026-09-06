@@ -99,10 +99,49 @@ const item: Variants = {
   },
 };
 
+const RONIN_BASE_IMG =
+  "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260831_115955_2a9adb39-5e9b-4ced-96e2-6900eabe3de9.png&w=1920&q=85";
+const RONIN_REVEAL_IMG =
+  "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260831_123709_183f0065-efb2-4bb2-a849-13aaa5af2f3f.png&w=1920&q=85";
+
+function useSpotlightReveal(scopeRef: React.RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    const scope = scopeRef.current;
+    if (!scope) return;
+    const reveal = scope.querySelector<HTMLElement>(".spot-reveal");
+    if (!reveal) return;
+
+    const applyMask = (x: number, y: number) => {
+      const rect = scope.getBoundingClientRect();
+      const px = x - rect.left;
+      const py = y - rect.top;
+      const r = window.innerWidth < 480 ? 120 : window.innerWidth < 720 ? 160 : 260;
+      const mask = `radial-gradient(circle ${r}px at ${px}px ${py}px, #fff 0%, #fff 40%, rgba(255,255,255,0.75) 60%, rgba(255,255,255,0.4) 75%, rgba(255,255,255,0.12) 88%, transparent 100%)`;
+      reveal.style.webkitMaskImage = mask;
+      reveal.style.maskImage = mask;
+    };
+
+    const onMouse = (e: MouseEvent) => applyMask(e.clientX, e.clientY);
+    const onTouch = (e: TouchEvent) => {
+      const t = e.touches[0];
+      if (t) applyMask(t.clientX, t.clientY);
+    };
+
+    window.addEventListener("mousemove", onMouse);
+    window.addEventListener("touchmove", onTouch, { passive: true });
+    return () => {
+      window.removeEventListener("mousemove", onMouse);
+      window.removeEventListener("touchmove", onTouch);
+    };
+  }, [scopeRef]);
+}
+
 export function Hero() {
   const { scrollTo } = useSmoothScroll();
   const { booted } = useBoot();
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  useSpotlightReveal(sectionRef);
 
   useEffect(() => {
     if (booted && titleRef.current) {
@@ -117,10 +156,25 @@ export function Hero() {
   return (
     <section
       id="home"
+      ref={sectionRef}
       className="hero-stage relative flex min-h-dvh items-center overflow-hidden px-6 pt-16"
     >
       {/* reserved key-light the page settles under; hauls away as you scroll */}
       <div aria-hidden className="scene-light" />
+
+      {/* ronin spotlight — base plane settles, second plane peeled open by the cursor */}
+      <div aria-hidden className="absolute inset-0 z-0">
+        <div
+          className="spot-plane spot-base"
+          style={{ backgroundImage: `url(${RONIN_BASE_IMG})` }}
+        />
+        <div
+          className="spot-plane spot-reveal"
+          style={{ backgroundImage: `url(${RONIN_REVEAL_IMG})` }}
+        />
+        {/* scrim keeps the type legible over the frame */}
+        <div className="absolute inset-0 bg-[radial-gradient(120%_95%_at_50%_30%,rgba(5,6,12,0.30)_0%,rgba(5,6,12,0.55)_100%)]" />
+      </div>
 
       {/* environment enters slowly — never commanding */}
       <motion.div
@@ -150,7 +204,7 @@ export function Hero() {
       />
 
       <motion.div
-        className="mx-auto grid w-full max-w-6xl items-center gap-14 md:grid-cols-[1.1fr_0.9fr]"
+        className="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-14 md:grid-cols-[1.1fr_0.9fr]"
         variants={container}
         initial="hidden"
         animate={booted ? "show" : "hidden"}
@@ -241,11 +295,18 @@ export function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: booted ? 1 : 0 }}
         transition={{ duration: 1.4, ease: "easeOut", delay: 2.2 }}
-        className="absolute bottom-7 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-foreground/35 transition-colors duration-500 hover:text-foreground/70"
+        className="absolute bottom-7 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-foreground/35 transition-colors duration-500 hover:text-foreground/70"
       >
         scroll
         <span className="block h-9 w-px bg-gradient-to-b from-transparent via-foreground/30 to-transparent" />
       </motion.button>
+
+      <a
+        href="/my-portfolio/"
+        className="absolute bottom-7 right-6 z-10 rounded-full border border-foreground/15 px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.2em] text-foreground/70 transition-colors duration-500 hover:border-accent/40 hover:text-foreground"
+      >
+        ® cyber ronin — landing →
+      </a>
     </section>
   );
 }
